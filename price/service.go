@@ -1,47 +1,45 @@
 package price
 
 import (
+	"fmt"
 	"sync"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 )
 
+// Price service fetches the sources periodically.
 type PriceService struct {
 	cmn.BaseService
 	mutex  *sync.RWMutex
-	prices map[string]sdk.DecCoin
+	sourceMetas map[string]SourceMetaSet
 }
 
 func NewPriceService() *PriceService {
 	ps := &PriceService{
 		mutex:  new(sync.RWMutex),
-		prices: make(map[string]sdk.DecCoin),
+		sourceMetas: make(map[string]SourceMetaSet),
 	}
 	ps.BaseService = *cmn.NewBaseService(nil, "PriceService", ps)
 	return ps
 }
 
-func (ps *PriceService) OnStart() error {
+func (ps PriceService) OnStart() error {
 	// TODO: gracefully quit go routine
-	go ps.coinoneToLuna(ps.Logger.With("market", "luna/krw"))
-	go ps.sdrToKrw(ps.Logger.With("market", "sdr/krw"))
-	go ps.usdToKrw(ps.Logger.With("market", "usd/krw"))
+	go ps.startRoutine()
 	return nil
 }
 
-func (ps *PriceService) GetPrice(market string) sdk.DecCoin {
-	ps.mutex.RLock()
-	defer func() {
-		ps.mutex.RUnlock()
-	}()
-	return ps.prices[market]
-}
+func (ps PriceService) PushSourceMeta(sourceMeta SourceMeta) {
+	if sourceMeta.Source == nil {
+		panic(fmt.Errorf("source not set"))
+	}
+	if sourceMeta.Weight == 0 {
+		panic(fmt.Errorf("weight should not be zero"))
+	}
 
-func (ps *PriceService) SetPrice(market string, coin sdk.DecCoin) {
-	ps.mutex.Lock()
-	defer func() {
-		ps.mutex.Unlock()
-	}()
-	ps.prices[market] = coin
+	metaset, ok := ps.sourceMetas[sourceMeta.Source.Pair().String()]
+	if ok == false {
+		metaset = make(SourceMetaSet, 0)
+	}
+	ps.sourceMetas[sourceMeta.Source.Pair().String()] = append(metaset, &sourceMeta)
 }

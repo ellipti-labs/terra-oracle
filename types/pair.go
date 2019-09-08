@@ -38,8 +38,12 @@ func NewPair(base string, quote string) BasePair {
 	}
 }
 
+func PairStr(base string, quote string) string {
+	return base + "/" + quote
+}
+
 func (pair BasePair) String() string {
-	return pair.base + "/" + pair.quote
+	return PairStr(pair.base, pair.quote)
 }
 
 func (pair BasePair) Base() string {
