@@ -1,4 +1,4 @@
-module github.com/node-a-team/terra-oracle
+module github.com/everett-protocol/terra-oracle
 
 go 1.12
 
