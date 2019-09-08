@@ -24,7 +24,7 @@ func NewForexDonamuSource () *ForexDonamuSource  {
 }
 
 func (source ForexDonamuSource) Market() string {
-	return "forex-from-dunamu-api"
+	return "forex-dunamu-api"
 }
 
 func (source ForexDonamuSource) Pair() types.Pair {
