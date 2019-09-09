@@ -11,3 +11,5 @@ type Source interface {
 	Fetch() error
 	Interval() time.Duration
 }
+
+type SourceProvider func(interval time.Duration) Source

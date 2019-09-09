@@ -17,10 +17,14 @@ type CoinoneSource struct {
 
 var _ types.Source = &CoinoneSource{}
 
-func NewCoinoneSource() *CoinoneSource {
+func SourceProvider() (string, string, types.SourceProvider) {
+	return types.PairStr(types.LUNA, types.KRW), "coinone", NewCoinoneSource
+}
+
+func NewCoinoneSource(interval time.Duration) types.Source {
 	return &CoinoneSource{
 		lunaToKrw: types.NewPair(types.LUNA, types.KRW),
-		interval:  time.Second * 5,
+		interval:  interval,
 	}
 }
 

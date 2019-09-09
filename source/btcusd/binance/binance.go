@@ -16,10 +16,14 @@ type BinanceSource struct {
 
 var _ types.Source = &BinanceSource{}
 
-func NewBinanceSource() *BinanceSource {
+func SourceProvider() (string, string, types.SourceProvider) {
+	return types.PairStr(types.BTC, types.USD), "binance", NewBinanceSource
+}
+
+func NewBinanceSource(interval time.Duration) types.Source {
 	return &BinanceSource{
 		btcToUsd: types.NewPair(types.BTC, types.USD),
-		interval: time.Second * 5,
+		interval: interval,
 	}
 }
 

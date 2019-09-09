@@ -13,11 +13,14 @@ import (
 
 	"github.com/tendermint/tendermint/rpc/client"
 
+	"github.com/spf13/viper"
+
 	"github.com/everett-protocol/terra-oracle/types"
 )
 
 const (
 	FlagValidator = "validator"
+	FlagPassword  = "password"
 )
 
 func (os *OracleService) init() error {
@@ -31,11 +34,15 @@ func (os *OracleService) init() error {
 	}
 
 	fromName := os.cliCtx.GetFromName()
-	_passphrase, err := keys.GetPassphrase(fromName)
-	if err != nil {
-		return err
+	passphrase := viper.GetString(FlagPassword)
+	if passphrase == "" {
+		var err error
+		passphrase, err = keys.GetPassphrase(fromName)
+		if err != nil {
+			return err
+		}
 	}
-	os.passphrase = _passphrase
+	os.passphrase = passphrase
 
 	return nil
 }

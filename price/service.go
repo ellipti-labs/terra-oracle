@@ -94,4 +94,8 @@ func (ps PriceService) PushSourceMeta(sourceMeta SourceMeta) {
 		metaset = make(SourceMetaSet, 0)
 	}
 	ps.sourceMetas[sourceMeta.Source.Pair().String()] = append(metaset, &sourceMeta)
+
+	ps.Logger.Info(
+		fmt.Sprintf("Source pushed: (pair: %s, market: %s, interval: %s, weight: %d)",
+			sourceMeta.Source.Pair(), sourceMeta.Source.Market(), sourceMeta.Source.Interval(), sourceMeta.Weight))
 }

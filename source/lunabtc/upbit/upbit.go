@@ -16,10 +16,14 @@ type UpbitSource struct {
 
 var _ types.Source = &UpbitSource{}
 
-func NewUpbitSource() *UpbitSource {
+func SourceProvider() (string, string, types.SourceProvider) {
+	return types.PairStr(types.LUNA, types.BTC), "upbit", NewUpbitSource
+}
+
+func NewUpbitSource(interval time.Duration) types.Source {
 	return &UpbitSource{
 		lunaToBtc: types.NewPair(types.LUNA, types.BTC),
-		interval:  time.Second * 5,
+		interval:  interval,
 	}
 }
 

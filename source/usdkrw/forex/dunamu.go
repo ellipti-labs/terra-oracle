@@ -16,10 +16,14 @@ type ForexDonamuSource struct {
 
 var _ types.Source = &ForexDonamuSource{}
 
-func NewForexDonamuSource() *ForexDonamuSource {
+func SourceProvider() (string, string, types.SourceProvider) {
+	return types.PairStr(types.USD, types.KRW), "forex-dunamu-api", NewForexDonamuSource
+}
+
+func NewForexDonamuSource(interval time.Duration) types.Source {
 	return &ForexDonamuSource{
 		usdToKrw: types.NewPair(types.USD, types.KRW),
-		interval: time.Minute * 10,
+		interval: interval,
 	}
 }
 

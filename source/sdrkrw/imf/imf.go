@@ -18,10 +18,14 @@ type IMFSource struct {
 
 var _ types.Source = &IMFSource{}
 
-func NewIMFSource() *IMFSource {
+func SourceProvider() (string, string, types.SourceProvider) {
+	return types.PairStr(types.SDR, types.KRW), "imf", NewIMFSource
+}
+
+func NewIMFSource(interval time.Duration) types.Source {
 	return &IMFSource{
 		sdrToKrw: types.NewPair(types.SDR, types.KRW),
-		interval: time.Minute * 30,
+		interval: interval,
 	}
 }
 

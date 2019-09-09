@@ -2,21 +2,13 @@ package main
 
 import (
 	"fmt"
-	btcUpbit "github.com/everett-protocol/terra-oracle/source/btckrw/upbit"
-	"github.com/everett-protocol/terra-oracle/source/btcusd/binance"
-	"github.com/everett-protocol/terra-oracle/source/lunabtc/upbit"
-	"github.com/everett-protocol/terra-oracle/source/lunakrw/coinone"
-	"github.com/everett-protocol/terra-oracle/source/sdrkrw/imf"
-	"github.com/everett-protocol/terra-oracle/source/usdkrw/forex"
 	"os"
 	"path"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
-	cmn "github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/terra-project/core/app"
@@ -28,9 +20,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	_ "github.com/terra-project/core/client/lcd/statik"
-
-	"github.com/everett-protocol/terra-oracle/oracle"
-	"github.com/everett-protocol/terra-oracle/price"
 )
 
 var (
@@ -64,6 +53,7 @@ func main() {
 	// Construct Root Command
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
+		initCmd(),
 		svcCmd(cdc),
 		client.LineBreak,
 		keys.Commands(),
@@ -77,67 +67,6 @@ func main() {
 		fmt.Printf("Failed executing CLI command: %s, exiting...\n", err)
 		os.Exit(1)
 	}
-}
-
-func svcCmd(cdc *amino.Codec) *cobra.Command {
-	svcCmd := &cobra.Command{
-		Use:   "service",
-		Short: "Transactions subcommands",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			ps := price.NewPriceService()
-			ps.SetLogger(logger.With("module", "price"))
-
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: coinone.NewCoinoneSource(),
-				Weight: 10,
-			})
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: upbit.NewUpbitSource(),
-				Weight: 10,
-			})
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: btcUpbit.NewUpbitSource(),
-				Weight: 10,
-			})
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: forex.NewForexDonamuSource(),
-				Weight: 10,
-			})
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: binance.NewBinanceSource(),
-				Weight: 10,
-			})
-			ps.PushSourceMeta(price.SourceMeta{
-				Source: imf.NewIMFSource(),
-				Weight: 10,
-			})
-
-			oracleService := oracle.NewOracleService(*ps, cdc)
-			oracleService.SetLogger(logger.With("module", "oracle"))
-
-			// Stop upon receiving SIGTERM or CTRL-C.
-			cmn.TrapSignal(logger, func() {
-				if ps.IsRunning() {
-					oracleService.Stop()
-				}
-			})
-
-			if err := oracleService.Start(); err != nil {
-				return fmt.Errorf("failed to start node: %v", err)
-			}
-
-			// Run forever.
-			select {}
-		},
-	}
-
-	svcCmd.Flags().String(oracle.FlagValidator, "", "")
-
-	svcCmd = client.PostCommands(svcCmd)[0]
-	svcCmd.MarkFlagRequired(client.FlagFrom)
-	svcCmd.MarkFlagRequired(oracle.FlagValidator)
-
-	return svcCmd
 }
 
 func initConfig(cmd *cobra.Command) error {
