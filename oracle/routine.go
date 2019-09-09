@@ -64,7 +64,7 @@ func (os *OracleService) startRoutine() {
 
 			var tick int64 = latestHeignt / VotePeriod
 			if tick <= latestVoteHeight/VotePeriod {
-				// return
+				return
 			}
 			latestVoteHeight = latestHeignt
 			os.Logger.Info(fmt.Sprintf("Tick: %d", tick))

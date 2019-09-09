@@ -131,7 +131,11 @@ func svcCmd(cdc *amino.Codec) *cobra.Command {
 		},
 	}
 
+	svcCmd.Flags().String(oracle.FlagValidator, "", "")
+
 	svcCmd = client.PostCommands(svcCmd)[0]
+	svcCmd.MarkFlagRequired(client.FlagFrom)
+	svcCmd.MarkFlagRequired(oracle.FlagValidator)
 
 	return svcCmd
 }
