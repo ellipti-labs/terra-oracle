@@ -14,7 +14,7 @@ import (
 // Price service fetches the sources periodically.
 type PriceService struct {
 	cmn.BaseService
-	mutex  *sync.RWMutex
+	mutex       *sync.RWMutex
 	sourceMetas map[string]SourceMetaSet
 
 	currencies []string
@@ -22,7 +22,7 @@ type PriceService struct {
 
 func NewPriceService() *PriceService {
 	ps := &PriceService{
-		mutex:  new(sync.RWMutex),
+		mutex:       new(sync.RWMutex),
 		sourceMetas: make(map[string]SourceMetaSet),
 
 		currencies: []string{types.BTC, types.KRW, types.LUNA, types.USD, types.SDR},
@@ -70,7 +70,7 @@ func (ps PriceService) GetPriceExact(base string, quote string) (sdk.Dec, uint64
 			ps.Logger.Error(fmt.Sprintf("Error when getting price %s: %s", meta.Source.Pair(), err.Error()))
 			continue
 		}
-		sum = sum.Add(price)
+		sum = sum.Add(price.MulInt64(int64(meta.Weight)))
 		weightSum += meta.Weight
 	}
 
