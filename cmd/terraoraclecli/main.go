@@ -2,6 +2,12 @@ package main
 
 import (
 	"fmt"
+	btcUpbit "github.com/everett-protocol/terra-oracle/source/btckrw/upbit"
+	"github.com/everett-protocol/terra-oracle/source/btcusd/binance"
+	"github.com/everett-protocol/terra-oracle/source/lunabtc/upbit"
+	"github.com/everett-protocol/terra-oracle/source/lunakrw/coinone"
+	"github.com/everett-protocol/terra-oracle/source/sdrkrw/imf"
+	"github.com/everett-protocol/terra-oracle/source/usdkrw/forex"
 	"os"
 	"path"
 
@@ -23,8 +29,8 @@ import (
 
 	_ "github.com/terra-project/core/client/lcd/statik"
 
-	"github.com/node-a-team/terra-oracle/oracle"
-	"github.com/node-a-team/terra-oracle/price"
+	"github.com/everett-protocol/terra-oracle/oracle"
+	"github.com/everett-protocol/terra-oracle/price"
 )
 
 var (
@@ -46,7 +52,7 @@ func main() {
 	config.Seal()
 
 	rootCmd := &cobra.Command{
-		Use: "terra-oracle",
+		Use: "terraoracled",
 	}
 
 	// Add --chain-id to persistent flags and mark it required
@@ -81,18 +87,43 @@ func svcCmd(cdc *amino.Codec) *cobra.Command {
 			ps := price.NewPriceService()
 			ps.SetLogger(logger.With("module", "price"))
 
-			os := oracle.NewOracleService(ps, cdc)
-			os.SetLogger(logger.With("module", "oracle"))
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: coinone.NewCoinoneSource(),
+				Weight: 10,
+			})
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: upbit.NewUpbitSource(),
+				Weight: 10,
+			})
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: btcUpbit.NewUpbitSource(),
+				Weight: 10,
+			})
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: forex.NewForexDonamuSource(),
+				Weight: 10,
+			})
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: binance.NewBinanceSource(),
+				Weight: 10,
+			})
+			ps.PushSourceMeta(price.SourceMeta{
+				Source: imf.NewIMFSource(),
+				Weight: 10,
+			})
+
+			oracleService := oracle.NewOracleService(*ps, cdc)
+			oracleService.SetLogger(logger.With("module", "oracle"))
 
 			// Stop upon receiving SIGTERM or CTRL-C.
 			cmn.TrapSignal(logger, func() {
-				if os.IsRunning() {
-					os.Stop()
+				if ps.IsRunning() {
+					oracleService.Stop()
 				}
 			})
 
-			if err := os.Start(); err != nil {
-				return fmt.Errorf("Failed to start node: %v", err)
+			if err := oracleService.Start(); err != nil {
+				return fmt.Errorf("failed to start node: %v", err)
 			}
 
 			// Run forever.
@@ -100,13 +131,7 @@ func svcCmd(cdc *amino.Codec) *cobra.Command {
 		},
 	}
 
-	svcCmd.Flags().String(oracle.FlagValidator, "", "")
-	svcCmd.Flags().Float64(oracle.FlagSoftLimit, 0, "")
-	svcCmd.Flags().Float64(oracle.FlagHardLimit, 0, "")
-
 	svcCmd = client.PostCommands(svcCmd)[0]
-	svcCmd.MarkFlagRequired(client.FlagFrom)
-	svcCmd.MarkFlagRequired(oracle.FlagValidator)
 
 	return svcCmd
 }
