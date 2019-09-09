@@ -14,12 +14,12 @@ type ForexDonamuSource struct {
 	interval time.Duration
 }
 
-var _ types.Source = &ForexDonamuSource {}
+var _ types.Source = &ForexDonamuSource{}
 
-func NewForexDonamuSource () *ForexDonamuSource  {
-	return &ForexDonamuSource {
+func NewForexDonamuSource() *ForexDonamuSource {
+	return &ForexDonamuSource{
 		usdToKrw: types.NewPair(types.USD, types.KRW),
-		interval:  time.Minute * 10,
+		interval: time.Minute * 10,
 	}
 }
 

@@ -12,7 +12,7 @@ import (
 
 type CoinoneSource struct {
 	lunaToKrw types.Pair
-	interval time.Duration
+	interval  time.Duration
 }
 
 var _ types.Source = &CoinoneSource{}

@@ -15,7 +15,7 @@ type SourceMeta struct {
 	Source types.Source
 	Weight uint64
 
-	isFetching int32
+	isFetching         int32
 	lastFetchTimestamp time.Time
 }
 

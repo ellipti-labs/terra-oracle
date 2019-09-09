@@ -11,13 +11,13 @@ import (
 
 type UpbitSource struct {
 	lunaToBtc types.Pair
-	interval time.Duration
+	interval  time.Duration
 }
 
-var _ types.Source = &UpbitSource {}
+var _ types.Source = &UpbitSource{}
 
-func NewUpbitSource () *UpbitSource  {
-	return &UpbitSource {
+func NewUpbitSource() *UpbitSource {
+	return &UpbitSource{
 		lunaToBtc: types.NewPair(types.LUNA, types.BTC),
 		interval:  time.Second * 5,
 	}

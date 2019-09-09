@@ -23,7 +23,7 @@ type Pair interface {
 }
 
 type BasePair struct {
-	base string
+	base  string
 	quote string
 	price sdk.Dec
 }
@@ -31,8 +31,8 @@ type BasePair struct {
 var _ Pair = BasePair{}
 
 func NewPair(base string, quote string) BasePair {
-	return BasePair {
-		base: base,
+	return BasePair{
+		base:  base,
 		quote: quote,
 		price: sdk.ZeroDec(),
 	}
@@ -62,7 +62,7 @@ func (pair BasePair) Price() (sdk.Dec, error) {
 }
 
 func (pair BasePair) SetPrice(price sdk.Dec) Pair {
-	return BasePair {
+	return BasePair{
 		base:  pair.base,
 		quote: pair.quote,
 		price: price,
