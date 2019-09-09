@@ -41,6 +41,6 @@ func (meta *SourceMeta) Fetch(logger log.Logger) {
 		if err != nil {
 			logger.Error(fmt.Sprintf("Fail to parse price %s from %s: %s", source.Pair(), source.Market(), err.Error()))
 		}
-		logger.Info(fmt.Sprintf("Fetch %s from %s: %s", source.Pair(), source.Market(), price))
+		logger.Info(fmt.Sprintf("Fetch %s from %s: %s", source.Pair(), source.Market(), price), "market", source.Market(), "pair", source.Pair())
 	}
 }

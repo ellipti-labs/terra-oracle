@@ -22,7 +22,7 @@ func (ps PriceService) startRoutine() {
 					// Sleep a bit. It seems that logger is not thread safe.
 					// Without sleeping, log is often broken.
 					// By sleeping, mitigate this problem.
-					time.Sleep(time.Millisecond * 100)
+					time.Sleep(time.Millisecond * 200)
 				}
 			}
 		}()

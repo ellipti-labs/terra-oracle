@@ -96,6 +96,7 @@ func (os *OracleService) startRoutine() {
 				res, err := os.broadcast(voteMsgs)
 				if err != nil {
 					os.Logger.Error("Fail to send vote msgs", err.Error())
+					os.prevoteInited = false // Retry initialization (prevote msg).
 					return
 				}
 				if tick > res.Height/VotePeriod {
