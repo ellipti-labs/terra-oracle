@@ -24,7 +24,7 @@ func (ps PriceService) startRoutine() {
 					if sourceMeta.lastFetchTimestamp.IsZero() || sourceMeta.lastFetchTimestamp.Add(source.Interval()).Before(now) {
 						go ps.fetchSource(source)
 						sourceMeta.lastFetchTimestamp = now
-						
+
 						// Sleep a bit. It seems that logger is not thread safe.
 						// Without sleep, log is often broken.
 						time.Sleep(time.Millisecond * 100)
