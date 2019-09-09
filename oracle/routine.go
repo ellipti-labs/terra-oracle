@@ -27,7 +27,7 @@ func (os *OracleService) init() error {
 		WithAccountDecoder(os.cdc)
 
 	if os.cliCtx.BroadcastMode != "block" {
-		return errors.New("I recommend to use commit broadcast mode")
+		return errors.New("I recommend to use block broadcast mode")
 	}
 
 	fromName := os.cliCtx.GetFromName()
