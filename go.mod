@@ -10,6 +10,7 @@ require (
 	github.com/tendermint/go-amino v0.14.1
 	github.com/tendermint/tendermint v0.31.5
 	github.com/terra-project/core v0.2.3
+	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect
 )
 
 replace github.com/cosmos/cosmos-sdk => github.com/YunSuk-Yeo/cosmos-sdk v0.34.7-terra
