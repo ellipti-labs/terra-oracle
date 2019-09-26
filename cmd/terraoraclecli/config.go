@@ -25,6 +25,11 @@ name = "binance"
 weight = 1
 interval = "10s"
 
+[[btc-usd]]
+name = "coinbase"
+weight = 1
+interval = "10s"
+
 [[btc-krw]]
 name = "upbit"
 weight = 1
@@ -39,6 +44,12 @@ interval = "10s"
 name = "coinone"
 weight = 1
 interval = "10s"
+
+# I don't recommend using gopax due to their low volume.
+# [[luna-krw]]
+# name = "gopax"
+# weight = 1
+# interval = "10s"
 
 [[sdr-krw]]
 name = "imf"

@@ -20,10 +20,12 @@ import (
 
 	btcUpbit "github.com/everett-protocol/terra-oracle/source/btckrw/upbit"
 	"github.com/everett-protocol/terra-oracle/source/btcusd/binance"
+	"github.com/everett-protocol/terra-oracle/source/btcusd/coinbase"
 	"github.com/everett-protocol/terra-oracle/source/lunabtc/upbit"
 	"github.com/everett-protocol/terra-oracle/source/lunakrw/coinone"
 	"github.com/everett-protocol/terra-oracle/source/sdrkrw/imf"
 	"github.com/everett-protocol/terra-oracle/source/usdkrw/forex"
+	"github.com/everett-protocol/terra-oracle/source/lunakrw/gopax"
 )
 
 func svcCmd(cdc *amino.Codec) *cobra.Command {
@@ -40,6 +42,8 @@ func svcCmd(cdc *amino.Codec) *cobra.Command {
 			sourceManager.Register(forex.SourceProvider())
 			sourceManager.Register(binance.SourceProvider())
 			sourceManager.Register(imf.SourceProvider())
+			sourceManager.Register(coinbase.SourceProvider())
+			sourceManager.Register(gopax.SourceProvider())
 
 			home := viper.GetString(cli.HomeFlag)
 
